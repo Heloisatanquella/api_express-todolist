@@ -13,8 +13,9 @@ const Task = mongoose.model("Task", {
     description: String,
 });
 
-app.get("/tasks", (req, res) => {
-  res.send("Hello world");
+app.get("/tasks", async (req, res) => {
+    const tasks = await Task.find()
+    res.send(tasks);
 });
 
 app.post("/tasks", async (req, res) => {
