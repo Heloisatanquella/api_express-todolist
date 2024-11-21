@@ -15,8 +15,23 @@ const Task = mongoose.model("Task", {
 
 app.get("/tasks", async (req, res) => {
     const tasks = await Task.find()
-    res.send(tasks);
+    return res.send(tasks);
 });
+
+app.delete("/tasks/:id", async (req, res) => {
+    const task = await Task.findByIdAndDelete(req.params.id)
+    return res.send(task)
+});
+
+app.patch("/tasks/:id", async (req, res) => {
+    const task = await Task.findByIdAndUpdate(req.params.id, {
+        title: req.body.title,
+        description: req.body.description
+    }, {
+        new: true
+    })
+    return res.send(task)
+})
 
 app.post("/tasks", async (req, res) => {
     const task = new Task({
@@ -24,7 +39,7 @@ app.post("/tasks", async (req, res) => {
         description: req.body.description
     })
     await task.save()
-    res.send(task)
+    return res.send(task)
 })
 
 app.listen(port, () => {
