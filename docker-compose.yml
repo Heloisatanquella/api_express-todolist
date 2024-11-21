@@ -1,0 +1,16 @@
+version: '3.9' # Versão do Docker Compose
+
+services:
+  postgres:
+    image: postgres:15 # Versão da imagem PostgreSQL
+    environment:
+      POSTGRES_USER: root # Nome de usuário
+      POSTGRES_PASSWORD: root # Senha
+      POSTGRES_DB: db # Nome do banco de dados
+    ports:
+      - "5432:5432" # Porta do host mapeada para o container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistência de dados
+
+volumes:
+  postgres_data:

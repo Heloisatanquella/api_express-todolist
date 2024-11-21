@@ -1,98 +1,69 @@
 const express = require('express');
-const mongoose = require("mongoose");
 
-const { Task } = require("../entities/entities"); // Importando as entities
+const verifyToken = require('../middlewares/verify.token');
+const { PrismaClient } = require('@prisma/client');
 
 const taskRouter = express.Router()
+const prisma = new PrismaClient()
+
+// define o middleware tornando o token obrigatorio para as seguintes rotas
+taskRouter.use(verifyToken);
 
 //rota para buscar as tarefas no banco
 taskRouter.get("/", async (req, res) => {
-    const tasks = await Task.find()
+    const userId = req.userId
+
+    const tasks = await prisma.task.findMany({ where: { userId } });
     return res.send(tasks);
 });
 
 //rota para buscar uma tarefa pelo id no banco
 taskRouter.get("/:id", async (req, res) => {
+    const userId = req.userId
     const { id } = req.params;
 
-    // Verifica se o ID é válido
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("ID inválido");
+    const task = await prisma.task.findFirst({ where: { userId, id: Number(id) } });
+    if(!task){
+        return res.status(404).send("Tarefa não encontrada!")
     }
-    try {
-        // Tenta encontrar a tarefa pelo ID
-        const task = await Task.findById(id);
-        if (!task) {
-            return res.status(404).send("Tarefa não encontrada");
-        }
-        return res.send(task);
-    } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
-    }
+
+    return res.send(task);
 });
 
 //rota para excluir tarefa no banco pelo id
 taskRouter.delete("/:id", async (req, res) => {
+    const userId = req.userId
     const { id } = req.params;
 
-    // Valida se o ID é válido
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("ID inválido");
+    const task = await prisma.task.delete({ where: { userId, id: Number(id) } });
+    if(!task){
+        return res.status(404).send("Tarefa não encontrada!")
     }
 
-    try {
-        // Tenta encontrar e deletar a tarefa pelo ID
-        const task = await Task.findByIdAndDelete(id);
-        if (!task) {
-            return res.status(404).send("Tarefa não encontrada");
-        }
-        return res.send({ message: "Tarefa deletada com sucesso", task });
-    } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
-    }
+    return res.send("Tarefa excluida com sucesso");
 });
 
 //rota para atualizar tarefa no banco pelo id
 
 taskRouter.put("/:id", async (req, res) => {
+    const userId = req.userId
     const { id } = req.params;
     const { title, description } = req.body;
 
-    // Valida se o ID é válido
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send("ID inválido");
+    const task = await prisma.task.update({ where: { userId, id: Number(id) }, data: { title, description } });
+    if(!task){
+        return res.status(404).send("Tarefa não encontrada!")
     }
 
-    // Verifica se há campos a serem atualizados
-    if (!title && !description) {
-        return res.status(400).send("Nenhum campo fornecido para atualização");
-    }
-
-    try {
-        // Tenta encontrar e atualizar a tarefa
-        const task = await Task.findByIdAndUpdate(
-            id,
-            { title, description },
-            { new: true, runValidators: true } 
-        );
-
-        if (!task) {
-            return res.status(404).send("Tarefa não encontrada");
-        }
-
-        return res.send({ message: "Tarefa atualizada com sucesso", task });
-    } catch (error) {
-        return res.status(500).send("Erro interno do servidor");
-    }
+    return res.send({ message: "Tarefa atualizada com sucesso!", task });
 });
 
 //rota para criar tarefa no banco 
 taskRouter.post("/", async (req, res) => {
-    const task = new Task({
-        title: req.body.title,
-        description: req.body.description
-    })
-    await task.save()
+    const userId = req.userId
+    const { title, description } = req.body;
+
+    const task = await prisma.task.create({ data: { title, description, userId } });
     return res.send({ message: "Tarefa criada com sucesso!", task })
 })
 
