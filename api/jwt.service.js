@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 
+// Geração do token de acesso
 class JwtService{
     constructor(){
         this.secret = "SECRET"
