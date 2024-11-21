@@ -1,6 +1,7 @@
 //Inicialização das libs
 const express = require("express");
 const mongoose = require("mongoose");
+const bcrypt  = require("bcrypt");
 
 //Inicialização do projeto e database
 const app = express();
@@ -9,6 +10,7 @@ const port = 3000;
 mongoose.connect(
   "mongodb+srv://heloisatanquella:ymH6ZYhBoNv9K67E@apiexpress.4qfhd.mongodb.net/?retryWrites=true&w=majority&appName=apiexpress"
 );
+const saltRounds = 10;
 
 //tabela para armazenar as tarefas
 const Task = mongoose.model("Task", { 
@@ -56,10 +58,12 @@ app.patch("/tasks/:id", async (req, res) => {
 
 //rota para criar o usuário
 app.post("/users", async (req, res) => {
+    const hashPassword = await bcrypt.hash(req.body.password, saltRounds) //hash de senha
+
     const user = new User({
         username: req.body.username,
         email: req.body.email,
-        password: req.body.password
+        password: hashPassword
     })
     await user.save()
     return res.send(user)
