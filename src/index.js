@@ -16,7 +16,7 @@ mongoose.connect(
 app.use('/tasks', taskRouter)
 app.use('/users', userRouter)
 
-//escuta na porta 3000
+//escutando na porta 3000
 app.listen(port, () => {
     console.log("App running");
 });

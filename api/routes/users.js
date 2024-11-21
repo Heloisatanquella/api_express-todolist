@@ -3,7 +3,7 @@ const express = require('express');
 const bcrypt  = require("bcrypt");
 
 const saltRounds = 10; //saltos do hash
-const { User } = require("../entities/entities"); // Importando as entities
+const { User } = require("../entities/entities"); // Importando as entidades
 
 const userRouter = express.Router()
 
@@ -11,7 +11,7 @@ const userRouter = express.Router()
 userRouter.get("/", async (req, res) => {
     const { id } =  req.params;
         try {
-            // Tenta encontrar o usuario pelo ID
+            // tenta encontrar o usuario pelo ID
             const user = await User.findById(id);
             if (!user) {
                 return res.status(404).send("Usuário não encontrado");
