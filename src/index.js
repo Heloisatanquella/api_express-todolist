@@ -1,6 +1,8 @@
+//Inicialização das libs
 const express = require("express");
 const mongoose = require("mongoose");
 
+//Inicialização do projeto e database
 const app = express();
 app.use(express.json())
 const port = 3000;
@@ -8,21 +10,40 @@ mongoose.connect(
   "mongodb+srv://heloisatanquella:ymH6ZYhBoNv9K67E@apiexpress.4qfhd.mongodb.net/?retryWrites=true&w=majority&appName=apiexpress"
 );
 
+//tabela para armazenar as tarefas
 const Task = mongoose.model("Task", { 
     title: String,
     description: String,
 });
 
+//tabela para armazenar os usuários
+const User = mongoose.model("User", { 
+    username: String,
+    email: String,
+    password: String
+});
+
+//rota para buscar as tarefas no banco
 app.get("/tasks", async (req, res) => {
     const tasks = await Task.find()
     return res.send(tasks);
 });
 
+//
+
+//rota para buscar uma tarefa pelo id no banco
+app.get("/tasks/:id", async (req, res) => {
+    const task = await Task.findById(req.params.id)
+    return res.send(task)
+})
+
+//rota para excluir tarefa no banco pelo id
 app.delete("/tasks/:id", async (req, res) => {
     const task = await Task.findByIdAndDelete(req.params.id)
     return res.send(task)
 });
 
+//rota para atualizar tarefa no banco pelo id
 app.patch("/tasks/:id", async (req, res) => {
     const task = await Task.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
@@ -33,6 +54,18 @@ app.patch("/tasks/:id", async (req, res) => {
     return res.send(task)
 })
 
+//rota para criar o usuário
+app.post("/users", async (req, res) => {
+    const user = new User({
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password
+    })
+    await user.save()
+    return res.send(user)
+})
+
+//rota para criar tarefa no banco 
 app.post("/tasks", async (req, res) => {
     const task = new Task({
         title: req.body.title,
@@ -43,5 +76,5 @@ app.post("/tasks", async (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log("App running");
+    console.log("App running");
 });
