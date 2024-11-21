@@ -54,7 +54,7 @@ taskRouter.delete("/:id", async (req, res) => {
 
 //rota para atualizar tarefa no banco pelo id
 
-taskRouter.patch("/:id", async (req, res) => {
+taskRouter.put("/:id", async (req, res) => {
     const { id } = req.params;
     const { title, description } = req.body;
 
