@@ -1,8 +1,8 @@
 //Inicialização das libs
 const express = require("express");
 
-const taskRouter = require("../api/routes/tasks");
-const userRouter = require("../api/routes/users");
+const taskRouter = require("./api/routes/tasks");
+const userRouter = require("./api/routes/users");
 
 // Inicialização do projeto
 async function bootstarp() {

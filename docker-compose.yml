@@ -1,6 +1,19 @@
 version: '3.9' # Versão do Docker Compose
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Porta do host mapeada para o container
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules # Para evitar conflitos entre host e container
   postgres:
     image: postgres:15 # Versão da imagem PostgreSQL
     environment:
