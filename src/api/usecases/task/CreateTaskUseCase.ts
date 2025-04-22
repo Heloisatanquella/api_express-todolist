@@ -4,7 +4,7 @@ import { TaskRepository } from "../../repositories/task.repository";
 
 type UseCaseParam = {
   body: Prisma.TaskCreateInput;
-  userId: number | undefined;
+  userId: number ;
 };
 
 export class CreateTaskUseCase {
