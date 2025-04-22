@@ -7,6 +7,6 @@ const router = Router();
  router.put('/:id', TaskController.update)
  router.delete('/:id', TaskController.delete)
  router.get('/', TaskController.getByUser)
- router.get('/:id', TaskController.getByUser)
+ router.get('/:id', TaskController.getById)
 
 export default router;

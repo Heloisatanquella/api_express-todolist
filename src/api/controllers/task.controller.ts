@@ -14,22 +14,19 @@ export class TaskController {
       const { body, userId } = req;
 
       if (!userId) {
-        return res.status(400).json({ message: "User ID is required." });
+        res.status(400).json({ message: "User ID is required." });
+      } else {
+        const usecase = new CreateTaskUseCase(repository);
+        const task = await usecase.execute({ body, userId });
+        res.status(201).json({ message: "Task created successfully!", task });
       }
 
-      const usecase = new CreateTaskUseCase(repository);
-      const task = await usecase.execute({ body, userId });
-      return res
-        .status(201)
-        .json({ message: "Task created successfully!", task });
     } catch (error: unknown) {
       console.error(error);
       if (error instanceof Error) {
-        return res
-          .status(500)
-          .json({ message: "Failed to create task.", error: error.message });
+        res.status(500).json({ message: "Failed to create task.", error: error.message });
       }
-      return res.status(500).json({ message: "Unknown error occurred." });
+      res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 
@@ -37,7 +34,7 @@ export class TaskController {
     try {
       const { id } = req.params;
       if (!id) {
-        return res.status(400).json({ message: "Task ID is required." });
+        res.status(400).json({ message: "Task ID is required." });
       }
 
       const { userId } = req;
@@ -50,18 +47,16 @@ export class TaskController {
       });
 
       if (!task) {
-        return res.status(404).json({ message: "Task not found." });
+        res.status(404).json({ message: "Task not found." });
       }
 
-      return res.json(task);
+      res.json(task);
     } catch (error: unknown) {
       console.error(error);
       if (error instanceof Error) {
-        return res
-          .status(500)
-          .json({ message: "Failed to update task.", error: error.message });
+        res.status(500).json({ message: "Failed to update task.", error: error.message });
       }
-      return res.status(500).json({ message: "Unknown error occurred." });
+      res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 
@@ -69,7 +64,7 @@ export class TaskController {
     try {
       const { id } = req.params;
       if (!id) {
-        return res.status(400).json({ message: "Task ID is required." });
+        res.status(400).json({ message: "Task ID is required." });
       }
 
       const { userId } = req.params;
@@ -81,17 +76,15 @@ export class TaskController {
       });
 
       if (!task) {
-        return res.status(404).json({ message: "Task not found." });
+        res.status(404).json({ message: "Task not found." });
       }
-      return res.json({ message: "Task deleted successfully!", task });
+      res.json({ message: "Task deleted successfully!", task });
     } catch (error: unknown) {
       console.error(error);
       if (error instanceof Error) {
-        return res
-          .status(500)
-          .json({ message: "Failed to delete task.", error: error.message });
+        res.status(500).json({ message: "Failed to delete task.", error: error.message });
       }
-      return res.status(500).json({ message: "Unknown error occurred." });
+      res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 
@@ -99,7 +92,7 @@ export class TaskController {
     try {
       const { id } = req.params;
       if (!id) {
-        return res.status(400).json({ message: "Task ID is required." });
+        res.status(400).json({ message: "Task ID is required." });
       }
 
       const { userId } = req;
@@ -111,17 +104,17 @@ export class TaskController {
       });
 
       if (!task) {
-        return res.status(404).json({ message: "Task not found." });
+        res.status(404).json({ message: "Task not found." });
       }
-      return res.json(task);
+      res.json(task);
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        return res
+        res
           .status(500)
           .json({ message: "Failed to retrieve task.", error: error.message });
       }
-      return res.status(500).json({ message: "Unknown error occurred." });
+      res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 
@@ -129,24 +122,21 @@ export class TaskController {
     try {
       const { userId } = req;
       if (!userId) {
-        return res.status(400).json({ message: "User ID is required." });
+        res.status(400).json({ message: "User ID is required." });
+      } else {
+        const usecase = new GetTasksByUserUseCase(repository);
+        const tasks = await usecase.execute({ id: userId });
+        if (tasks.length === 0) {
+          res.status(404).json({ message: "No tasks found for this user." });
+        }
+        res.json(tasks);
       }
-      const usecase = new GetTasksByUserUseCase(repository);
-      const tasks = await usecase.execute({ id: userId });
-      if (tasks.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No tasks found for this user." });
-      }
-      return res.json(tasks);
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        return res
-          .status(500)
-          .json({ message: "Failed to retrieve tasks.", error: error.message });
+        res.status(500).json({ message: "Failed to retrieve tasks.", error: error.message });
       }
-      return res.status(500).json({ message: "Unknown error occurred." });
+      res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 }
