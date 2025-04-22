@@ -1,4 +1,4 @@
-import jwtService from "../jwt.service"; //importando a classe com o token
+import jwtService from "../services/jwt.service"; //importando a classe com o token
 import { Request, Response, NextFunction } from 'express';
 // middleware que valida a autorizaçao e faz o decode do token
 async function verifyToken(req: Request, res: Response, next: NextFunction) {
