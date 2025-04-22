@@ -11,37 +11,142 @@ const repository = new TaskRepository();
 export class TaskController {
   static async create(req: Request, res: Response) {
     try {
-        const usecase = new CreateTaskUseCase(repository);
-        const { body, userId } = req;
-        const task = await usecase.execute({ body, userId });
-        res.status(201).json(task);
-    } catch (error) {
-        res.status(500).json(error);
+      const { body, userId } = req;
+
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required." });
+      }
+
+      const usecase = new CreateTaskUseCase(repository);
+      const task = await usecase.execute({ body, userId });
+      return res
+        .status(201)
+        .json({ message: "Task created successfully!", task });
+    } catch (error: unknown) {
+      console.error(error);
+      if (error instanceof Error) {
+        return res
+          .status(500)
+          .json({ message: "Failed to create task.", error: error.message });
+      }
+      return res.status(500).json({ message: "Unknown error occurred." });
     }
   }
 
   static async update(req: Request, res: Response) {
-    const usecase = new UpdateTaskUseCase(repository);
-    const task = await usecase.execute(Number(req.params.id), req.body);
-    res.json(task);
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ message: "Task ID is required." });
+      }
+
+      const { userId } = req;
+      const usecase = new UpdateTaskUseCase(repository);
+
+      const task = await usecase.execute({
+        taskId: Number(id),
+        body: req.body,
+        userId: Number(userId),
+      });
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found." });
+      }
+
+      return res.json(task);
+    } catch (error: unknown) {
+      console.error(error);
+      if (error instanceof Error) {
+        return res
+          .status(500)
+          .json({ message: "Failed to update task.", error: error.message });
+      }
+      return res.status(500).json({ message: "Unknown error occurred." });
+    }
   }
 
   static async delete(req: Request, res: Response) {
-    const usecase = new DeleteTaskUseCase(repository);
-    const task = await usecase.execute(Number(req.params.id));
-    res.json({ message: 'Tarefa deletada com sucesso!', task });
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ message: "Task ID is required." });
+      }
+
+      const { userId } = req.params;
+      const usecase = new DeleteTaskUseCase(repository);
+
+      const task = await usecase.execute({
+        id: Number(id),
+        userId: Number(userId),
+      });
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found." });
+      }
+      return res.json({ message: "Task deleted successfully!", task });
+    } catch (error: unknown) {
+      console.error(error);
+      if (error instanceof Error) {
+        return res
+          .status(500)
+          .json({ message: "Failed to delete task.", error: error.message });
+      }
+      return res.status(500).json({ message: "Unknown error occurred." });
+    }
   }
 
   static async getById(req: Request, res: Response) {
-    const usecase = new GetTasksByIdUseCase(repository);
-    const task = await usecase.execute(Number(req.params.id));
-    if (!task) res.status(404).json({ message: "Tarefa não encontrada" });
-    res.json(task);
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return res.status(400).json({ message: "Task ID is required." });
+      }
+
+      const { userId } = req;
+
+      const usecase = new GetTasksByIdUseCase(repository);
+      const task = await usecase.execute({
+        id: Number(id),
+        userId: Number(userId),
+      });
+
+      if (!task) {
+        return res.status(404).json({ message: "Task not found." });
+      }
+      return res.json(task);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        return res
+          .status(500)
+          .json({ message: "Failed to retrieve task.", error: error.message });
+      }
+      return res.status(500).json({ message: "Unknown error occurred." });
+    }
   }
 
   static async getByUser(req: Request, res: Response) {
-    const usecase = new GetTasksByUserUseCase(repository);
-    const tasks = await usecase.execute(Number(req.userId));
-    res.json(tasks);
+    try {
+      const { userId } = req;
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required." });
+      }
+      const usecase = new GetTasksByUserUseCase(repository);
+      const tasks = await usecase.execute({ id: userId });
+      if (tasks.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No tasks found for this user." });
+      }
+      return res.json(tasks);
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        return res
+          .status(500)
+          .json({ message: "Failed to retrieve tasks.", error: error.message });
+      }
+      return res.status(500).json({ message: "Unknown error occurred." });
+    }
   }
 }

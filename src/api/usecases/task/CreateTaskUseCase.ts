@@ -11,6 +11,9 @@ export class CreateTaskUseCase {
   constructor(private taskRepository: TaskRepository) {}
 
   async execute({ body, userId }: UseCaseParam): Promise<Task> {
+    if (!body.title || !body.description) {
+      throw new Error("Title and description is required.");
+    }
     return await this.taskRepository.create({
       ...body,
       user: {

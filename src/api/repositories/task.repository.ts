@@ -20,12 +20,12 @@ export class TaskRepository {
         });
       }
 
-    async delete(id: number): Promise<Task> {
-        return await this.prisma.task.delete({where: {id}})
+    async delete(id: number, userId: number): Promise<Task> {
+        return await this.prisma.task.delete({where: {id, userId}})
     }
 
-    async findById(id: number): Promise<Task | null> {
-        return await this.prisma.task.findUnique({where: {id}})
+    async findById(id: number, userId: number): Promise<Task | null> {
+        return await this.prisma.task.findUnique({where: {id, userId}})
     }
 
     async findAllByUserId(userId: number): Promise<Task[]> {

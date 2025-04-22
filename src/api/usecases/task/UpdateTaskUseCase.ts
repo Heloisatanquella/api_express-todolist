@@ -16,8 +16,8 @@ export class UpdateTaskUseCase {
       user: {
         connect: {
           id: userId,
-        },
-      },
+        }
+      }
     });
   }
 }
