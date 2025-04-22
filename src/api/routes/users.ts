@@ -71,6 +71,7 @@ userRouter.get("/", async (req: Request, res: Response) => {
     }
     res.send(user);
   } catch (error) {
+    console.log(error)
     res.status(500).send("Erro interno do servidor");
   }
 });
@@ -89,6 +90,7 @@ userRouter.put("/", async (req: Request, res: Response) => {
 
     res.send({ message: "Usuário atualizado com sucesso! ", user });
   } catch (error) {
+    console.log(error)
     res.status(400).send("Usuário não encontrado");
   }
 });
