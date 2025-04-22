@@ -14,6 +14,7 @@ taskRouter.get("/", async (req: Request, res: Response) => {
     const tasks = await prisma.task.findMany({ where: { userId } });
     res.send(tasks);
   } catch (error) {
+    console.log(error)
     res.status(500).send("Erro interno do servidor");
   }
 });
@@ -33,6 +34,7 @@ taskRouter.get("/:id", async (req: Request, res: Response) => {
       res.send(task);
     }
   } catch (error) {
+    console.log(error)
     res.status(500).send("Erro interno do servidor");
   }
 });
@@ -55,6 +57,7 @@ taskRouter.delete("/:id", async (req: Request, res: Response) => {
       res.send("Tarefa excluida com sucesso");
     }
   } catch (error) {
+    console.log(error)
     res.status(500).send("Erro interno do servidor");
   }
 });
@@ -77,6 +80,7 @@ taskRouter.put("/:id", async (req: Request, res: Response) => {
       res.send({ message: "Tarefa atualizada com sucesso!", task });
     }
   } catch (error) {
+    console.log(error)
     res.status(500).send("Erro interno do servidor");
   }
 });

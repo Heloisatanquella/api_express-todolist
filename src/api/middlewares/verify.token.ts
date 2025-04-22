@@ -6,6 +6,7 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     if(!strToken) {
         res.status(401).send('Token não encontrado')
     }
+    // eslint-disable-next-line
     const [_, token] = (strToken as string).split(' ');
 
     if(!token) {
