@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
-import userRouter from './api/routes/users';
-import taskRouter from './api/routes/tasks';
+import taskRouter from './api/routes/task.routes';
+import userRouter from './api/routes/user.routes';
 
-// Inicialização do projeto
 async function bootstarp() {
   const app = express();
-  app.use(express.json());
+  app.use(express.json());  
   const port = 3000;
   
   app.get('/', (req: Request, res: Response) => {
@@ -15,14 +14,11 @@ async function bootstarp() {
     });
   });
 
-  
-  // Definindo as rotas
-  app.use("/users", userRouter);
-  app.use("/tasks", taskRouter);
+  app.use("/users", userRouter);  
+  app.use("/tasks", taskRouter);  
 
-  // Escutando na porta 3000
   app.listen(port, () => {
-    console.log("App running");
+    console.log("App running on port", port);
   });
 }
 

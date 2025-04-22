@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwtService from "../jwt.service";
-import prisma from "../../libs/prisma";
+import jwtService from "../services/jwt.service";
+import prisma from "../libs/prisma";
 import { User } from "@prisma/client";
 import verifyToken from "../middlewares/verify.token";
 
