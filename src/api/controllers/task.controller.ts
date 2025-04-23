@@ -1,16 +1,16 @@
 import { TaskRepository } from "../repositories/task.repository";
 import { CreateTaskUseCase } from "../usecases/task/create.usecase";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UpdateTaskUseCase } from "../usecases/task/update.usecase";
 import { DeleteTaskUseCase } from "../usecases/task/delete.usecase";
 import { GetTasksByUserUseCase } from "../usecases/task/getByUser.usecase";
 import { GetTasksByIdUseCase } from "../usecases/task/getById.usecase";
-import { InternalError, NotFoundError, BadRequestError } from "../errors/AppError";
+import { NotFoundError, BadRequestError } from "../errors/AppError";
 
 const repository = new TaskRepository();
 
 export class TaskController {
-  static async create(req: Request, res: Response) {
+  static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const { body, userId } = req;
 
@@ -21,20 +21,12 @@ export class TaskController {
         const task = await usecase.execute({ body, userId });
         res.status(201).json({ message: "Task created successfully!", task });
       }
-    } catch (error: unknown) {
-      console.error(error);
-      if (error instanceof InternalError) {
-        res.json({
-          message: "Failed to create task.",
-          error: error.message,
-        });
-      }
-
-      throw new InternalError();
-    }
+    } catch (error) {
+      next(error);
+   }
   }
 
-  static async update(req: Request, res: Response) {
+  static async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       if (!id) {
@@ -55,19 +47,12 @@ export class TaskController {
       }
 
       res.json(task);
-    } catch (error: unknown) {
-      console.error(error);
-      if (error instanceof InternalError) {
-        res.json({
-          message: "Failed to update task.",
-          error: error.message,
-        });
-      }
-      throw new InternalError();
-    }
+    } catch (error) {
+      next(error);
+   }
   }
 
-  static async delete(req: Request, res: Response) {
+  static async delete(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       if (!id) {
@@ -86,17 +71,12 @@ export class TaskController {
         throw new NotFoundError("Task not found");
       }
       res.json({ message: "Task deleted successfully!", task });
-    } catch (error: unknown) {
-      console.error(error);
-      if (error instanceof InternalError) {
-        res
-          .json({ message: "Failed to delete task.", error: error.message });
-      }
-      throw new InternalError()
-    }
+    } catch (error) {
+      next(error);
+   }
   }
 
-  static async getById(req: Request, res: Response) {
+  static async getById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       if (!id) {
@@ -116,16 +96,11 @@ export class TaskController {
       }
       res.json(task);
     } catch (error) {
-      console.error(error);
-      if (error instanceof InternalError) {
-        res
-          .json({ message: "Failed to retrieve task.", error: error.message });
-      }
-      throw new InternalError()
-    }
+      next(error);
+   }
   }
 
-  static async getByUser(req: Request, res: Response) {
+  static async getByUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { userId } = req;
       if (!userId) {
@@ -139,12 +114,7 @@ export class TaskController {
         res.json(tasks);
       }
     } catch (error) {
-      console.error(error);
-      if (error instanceof InternalError) {
-        res
-          .json({ message: "Failed to retrieve tasks.", error: error.message });
-      }
-      throw new InternalError()
-    }
+      next(error);
+   }
   }
 }
