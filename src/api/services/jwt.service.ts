@@ -1,27 +1,28 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
+
+export type EncodeDataToken = {
+  userId: number;
+};
 
 // Geração do token de acesso
-export class JwtService{
-    private secret: string;
-    constructor(){
-        this.secret = "SECRET"
-    }
+export class JwtService {
+  private secret: string;
+  constructor() {
+    this.secret = "SECRET";
+  }
 
-    signin(data: object){
-        const token = jwt.sign(data, this.secret)
-        return token
-    }
+  signin(data: EncodeDataToken) {
+    return jwt.sign(data, this.secret);
+  }
 
-    decode(token: string){
-        try {
-            const decode = jwt.verify(token, this.secret) as object
-            return decode;
-        } catch (error) {
-            console.log(error)
-            throw error
-        }
+  decode(token: string) {
+    try {
+      return jwt.verify(token, this.secret) as EncodeDataToken;
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-
+  }
 }
 
-export default new JwtService()
+export default new JwtService();

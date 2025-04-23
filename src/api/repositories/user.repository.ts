@@ -4,23 +4,34 @@ import prisma from "../libs/prisma";
 
 export class UserRepository {
   private prisma: PrismaClient;
-
+  private userWithOutPassword: Prisma.UserSelect;
   constructor() {
     this.prisma = prisma;
+    this.userWithOutPassword = { id: true, name: true, email: true };
   }
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
-    return await this.prisma.user.create({ data });
+    return await this.prisma.user.create({
+      data,
+      select: this.userWithOutPassword,
+    });
   }
 
-  async findById(id: number): Promise<User | null> {
-    return await this.prisma.user.findUnique({ where: { id } });
+  async findByUniqueProp(
+    where: Prisma.UserWhereUniqueInput,
+    showPassword = false
+  ): Promise<User | null> {
+    return await this.prisma.user.findUnique({
+      where,
+      ...(!showPassword && { select: this.userWithOutPassword }),
+    });
   }
 
   async update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
     return await this.prisma.user.update({
       where: { id },
       data,
+      select: this.userWithOutPassword,
     });
   }
 }
