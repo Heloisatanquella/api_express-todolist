@@ -59,7 +59,7 @@ export class TaskController {
         throw new BadRequestError("Task ID is required");
       }
 
-      const { userId } = req.params;
+      const { userId } = req;
       const usecase = new DeleteTaskUseCase(repository);
 
       const task = await usecase.execute({
