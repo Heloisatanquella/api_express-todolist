@@ -4,13 +4,13 @@ import { Request, Response, NextFunction } from 'express';
 async function verifyToken(req: Request, res: Response, next: NextFunction) {
     const strToken = req.headers.authorization
     if(!strToken) {
-        res.status(401).send('Token não encontrado')
+        res.status(403).send('Token não encontrado')
     }
     // eslint-disable-next-line
     const [_, token] = (strToken as string).split(' ');
 
     if(!token) {
-        res.status(401).send('Token inválido')
+        res.status(403).send('Token inválido')
     }
 
     try {

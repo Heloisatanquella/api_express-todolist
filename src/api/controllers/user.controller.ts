@@ -1,63 +1,67 @@
 import { UserRepository } from "../repositories/user.repository";
-import { CreateUserUseCase } from "../usecases/user/CreateUserUseCase";
-import { Request, Response } from "express";
-import { FindUserUseCase } from "../usecases/user/FindUserUseCase";
-import { UpdateUserUseCase } from "../usecases/user/UpdateUserUseCase";
+import { CreateUserUseCase } from "../usecases/user/create.usecase";
+import { NextFunction, Request, Response } from "express";
+import { FindUserUseCase } from "../usecases/user/get.usecase";
+import { UpdateUserUseCase } from "../usecases/user/update.usecase";
+import { NotFoundError, BadRequestError } from "../errors/AppError";
+import { LoginUserUseCase } from "../usecases/user/login.usecase";
 
 const repository = new UserRepository();
 
 export class UserController {
-    static async create(req: Request, res: Response) {
+    static async create(req: Request, res: Response, next: NextFunction) {
         try {
-          const { body } = req.body;
+          const { body } = req;
     
           const usecase = new CreateUserUseCase(repository);
-          const user = await usecase.execute({ body });
+          const user = await usecase.execute(body);
           res.status(201).json({message: 'User created successfully',user});
         } catch (error) {
-          console.error(error);
-          if (error instanceof Error) {
-            res.status(500).json({ message: "Failed to create user.", error: error.message });
-          }
-          res.status(500).json({ message: "Unknown error occurred." });
+           next(error);
         }
       }
 
-
-      static async getById(req: Request, res: Response) {
+      static async login(req: Request, res: Response, next: NextFunction) {
         try {
-          const { id } = req.params;
-          const userId = Number(id);
+          const { body } = req;
     
-          if (!id || isNaN(userId)) {
-            res.status(400).json({ message: "Valid user ID is required." });
+          const usecase = new LoginUserUseCase();
+          const result = await usecase.execute(body);
+          res.status(201).json(result);
+        } catch (error) {
+           next(error);
+        }
+      }
+
+      static async getById(req: Request, res: Response, next: NextFunction) {
+        try {
+          const userId = req.userId;
+    
+          if (!userId || isNaN(userId)) {
+            throw new BadRequestError("Valid user ID is required.");
           }
     
           const usecase = new FindUserUseCase(repository);
           const user = await usecase.execute({ id: userId });
     
           if (!user) {
-            res.status(404).json({ message: "User not found." });
+            throw new NotFoundError("User not found");
           }
     
           res.status(201).json(user);
         } catch (error) {
-          console.error(error);
-          if (error instanceof Error) {
-            res.status(500).json({ message: "Failed to get user.", error: error.message });
-          }
-          res.status(500).json({ message: "Unknown error occurred." });
-        }
+          next(error);
+       }
       }
 
-      static async update(req: Request, res: Response) {
+      static async update(req: Request, res: Response, next: NextFunction) {
         try {
-          const { id } = req.params;
-          const { body } = req.body;
+          const { body, params } = req;
+          const { id } = params;
           const userId = Number(id);
       
           if (!id || isNaN(userId)) {
-            res.status(400).json({ message: "Valid user ID is required." });
+            throw new BadRequestError("Valid user ID is required.");
           }
       
           const usecase = new UpdateUserUseCase(repository);
@@ -67,17 +71,13 @@ export class UserController {
           });
       
           if (!user) {
-            res.status(404).json({ message: "User not found." });
+            throw new NotFoundError("User not found");
           }
       
           res.status(201).json(user);
         } catch (error) {
-          console.error(error);
-          if (error instanceof Error) {
-            res.status(500).json({ message: "Failed to update user.", error: error.message });
-          }
-          res.status(500).json({ message: "Unknown error occurred." });
-        }
+          next(error);
+       }
       }
       
 }
