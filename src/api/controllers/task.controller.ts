@@ -1,10 +1,10 @@
 import { TaskRepository } from "../repositories/task.repository";
-import { CreateTaskUseCase } from "../usecases/task/CreateTaskUseCase";
+import { CreateTaskUseCase } from "../usecases/task/create.usecase";
 import { Request, Response } from "express";
-import { UpdateTaskUseCase } from "../usecases/task/UpdateTaskUseCase";
-import { DeleteTaskUseCase } from "../usecases/task/DeleteTaskUseCase";
-import { GetTasksByUserUseCase } from "../usecases/task/GetTasksByUserUseCase";
-import { GetTasksByIdUseCase } from "../usecases/task/GetTasksByIdUseCase";
+import { UpdateTaskUseCase } from "../usecases/task/update.usecase";
+import { DeleteTaskUseCase } from "../usecases/task/delete.usecase";
+import { GetTasksByUserUseCase } from "../usecases/task/getByUser.usecase";
+import { GetTasksByIdUseCase } from "../usecases/task/getById.usecase";
 import { InternalError, NotFoundError, BadRequestError } from "../errors/AppError";
 
 const repository = new TaskRepository();
