@@ -1,14 +1,19 @@
 import { Task } from '@prisma/client';
 import { TaskRepository } from "../../repositories/task.repository";
+import { IUseCase } from '../../interfaces/usecase.inteface';
 
-type UseCaseParam = {
-  id: number ;
+type Param = {
+  userId: number ;
 };
+type Return = Task[];
 
-export class GetTasksByUserUseCase {
-  constructor(private taskRepository: TaskRepository) {}
+export class GetTasksByUserUseCase implements IUseCase<Param, Return> {
+  private taskRepository: TaskRepository;
 
-  async execute({ id }: UseCaseParam): Promise<Task[]> {
-    return await this.taskRepository.findAllByUserId(id);
+  constructor() {
+    this.taskRepository = new TaskRepository();
+  }
+  async execute({ userId }: Param): Promise<Return> {
+    return await this.taskRepository.findAllByUserId(userId);
   }
 }

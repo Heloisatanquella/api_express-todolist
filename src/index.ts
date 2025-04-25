@@ -3,6 +3,7 @@ import taskRouter from './api/routes/task.routes';
 import userRouter from './api/routes/user.routes';
 import { errorHandler } from './api/middlewares/errorHandler.middleware';
 import verifyToken from './api/middlewares/verifyToken.middleware';
+import 'reflect-metadata';
 
 async function bootstrap() {
   const app = express();

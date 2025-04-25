@@ -15,8 +15,13 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
 
     try {
         const decode = jwtService.decode(token) as { userId: number }
-        req.userId = decode.userId;
-        return next();
+
+        if ('userId' in decode && decode.userId) {
+            req.userId = decode.userId;
+            return next();
+        }
+
+        res.status(401).send('Token inválido')
     } catch (error) {
         console.log(error)
         res.status(401).send('Token inválido')

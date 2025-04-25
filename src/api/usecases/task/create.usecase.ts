@@ -1,22 +1,22 @@
-import { Prisma } from "@prisma/client";
 import { Task } from "@prisma/client";
 import { TaskRepository } from "../../repositories/task.repository";
-import { BadRequestError } from "../../errors/AppError";
+import { IUseCase } from "../../interfaces/usecase.inteface";
+import { CreateTaskDto } from "../../dtos/task.dtos";
 
-type UseCaseParam = {
-  body: Prisma.TaskCreateInput;
-  userId: number ;
+type Param = CreateTaskDto & {
+  userId: number
 };
+type Return = Task;
 
-export class CreateTaskUseCase {
-  constructor(private taskRepository: TaskRepository) {}
+export class CreateTaskUseCase implements IUseCase<Param, Return> {
+  private taskRepository: TaskRepository
+  constructor() {
+    this.taskRepository = new TaskRepository();
+  }
 
-  async execute({ body, userId }: UseCaseParam): Promise<Task> {
-    if (!body.title || !body.description) {
-      throw new BadRequestError("Title and description is required.");
-    }
+  async execute({ userId, ...rest }: Param): Promise<Task> {
     return await this.taskRepository.create({
-      ...body,  
+      ...rest,  
       user: {
         connect: {
           id: userId

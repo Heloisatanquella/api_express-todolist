@@ -1,19 +1,26 @@
 import { NotFoundError } from "../../errors/AppError";
+import { IUseCase } from "../../interfaces/usecase.inteface";
 import { UserRepository } from "../../repositories/user.repository";
 import { User } from "@prisma/client";
 
-type UseCaseParam = {
+type Param = {
   id: number;
 };
+type Return = User;
 
-export class FindUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+export class FindUserUseCase implements IUseCase<Param, Return> {
+  private userRepository: UserRepository;
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
 
-  async execute({ id }: UseCaseParam): Promise<User | null> {
-    if (!id) {
-      throw new NotFoundError("User not found");
-    } else {
-      return await this.userRepository.findByUniqueProp({ id });
+  async execute({ id }: Param): Promise<Return> {
+    const user = await this.userRepository.findByUniqueProp({ id });
+
+    if (user) {
+      return user;
     }
+
+    throw new NotFoundError("User not found");
   }
 }

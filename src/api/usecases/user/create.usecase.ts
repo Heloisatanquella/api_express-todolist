@@ -1,21 +1,19 @@
 import { hash } from "bcrypt";
-import { BadRequestError } from "../../errors/AppError";
 import { UserRepository } from "../../repositories/user.repository";
 import {  User } from "@prisma/client";
+import { CreateUserDto } from "../../dtos/user.dtos";
+import { IUseCase } from "../../interfaces/usecase.inteface";
 
-type UseCaseParam = {
-  name: string;
-  email: string;
-  password: string;
-};
+type Param = CreateUserDto;
+type Return = User
 
-export class CreateUserUseCase {
-  constructor(private userRepository: UserRepository) {}
+export class CreateUserUseCase implements IUseCase<Param, Return> {
+  private userRepository: UserRepository;
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
 
-  async execute(body: UseCaseParam): Promise<User> {
-    if (!body) {
-      throw new BadRequestError("All fields are required.");
-    }
+  async execute(body: Param): Promise<User> {
     const hashedPassword = await hash(body.password, 10)
 
     return await this.userRepository.create({

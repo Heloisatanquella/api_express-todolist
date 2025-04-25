@@ -1,23 +1,18 @@
-import { NotFoundError } from "../../errors/AppError";
+import { UpdateUserDto } from "../../dtos/user.dtos";
+import { IUseCase } from "../../interfaces/usecase.inteface";
 import { UserRepository } from "../../repositories/user.repository";
 import { User } from "@prisma/client";
 
-type UseCaseParam = {
-  body: {
-    name: string;
-    email: string;
-  };
-  id: number;
-};
+type Param = UpdateUserDto & { userId: number };
+type Return = User;
 
-export class UpdateUserUseCase {
-  constructor(private userRepository: UserRepository) {}
-
-  async execute({ id, body }: UseCaseParam): Promise<User> {
-    if (!id) {
-      throw new NotFoundError("User not found");
-    } else {
-      return await this.userRepository.update(id, body);
-    }
+export class UpdateUserUseCase implements IUseCase<Param, Return> {
+  private userRepository: UserRepository;
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+  async execute({ userId, ...rest }: Param): Promise<User> {
+      return await this.userRepository.update(userId, rest);
+    
   }
 }
