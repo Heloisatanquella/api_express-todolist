@@ -5,7 +5,7 @@ import { UpdateTaskUseCase } from "../usecases/task/update.usecase";
 import { DeleteTaskUseCase } from "../usecases/task/delete.usecase";
 import { GetTasksByUserUseCase } from "../usecases/task/getByUser.usecase";
 import { GetTasksByIdUseCase } from "../usecases/task/getById.usecase";
-import { NotFoundError, BadRequestError } from "../errors/AppError";
+import { BadRequestError } from "../errors/AppError";
 
 const repository = new TaskRepository();
 
@@ -15,7 +15,7 @@ export class TaskController {
       const { body, userId } = req;
 
       if (!userId) {
-        throw new BadRequestError("Task ID is required");
+        throw new BadRequestError("User ID is required");
       } else {
         const usecase = new CreateTaskUseCase(repository);
         const task = await usecase.execute({ body, userId });
@@ -42,10 +42,6 @@ export class TaskController {
         userId: Number(userId),
       });
 
-      if (!task) {
-        throw new NotFoundError("Task not found");
-      }
-
       res.json(task);
     } catch (error) {
       next(error);
@@ -67,10 +63,7 @@ export class TaskController {
         userId: Number(userId),
       });
 
-      if (!task) {
-        throw new NotFoundError("Task not found");
-      }
-      res.json({ message: "Task deleted successfully!", task });
+      res.status(200).json({ message: "Task deleted successfully!", task });
     } catch (error) {
       next(error);
    }
@@ -91,9 +84,6 @@ export class TaskController {
         userId: Number(userId),
       });
 
-      if (!task) {
-        throw new NotFoundError("Task not found");
-      }
       res.json(task);
     } catch (error) {
       next(error);
@@ -108,9 +98,7 @@ export class TaskController {
       } else {
         const usecase = new GetTasksByUserUseCase(repository);
         const tasks = await usecase.execute({ id: userId });
-        if (tasks.length === 0) {
-          throw new NotFoundError("No tasks found for this user.");
-        }
+      
         res.json(tasks);
       }
     } catch (error) {
