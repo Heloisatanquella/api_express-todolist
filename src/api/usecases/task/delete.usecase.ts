@@ -1,20 +1,26 @@
 import { Task } from "@prisma/client";
 import { TaskRepository } from "../../repositories/task.repository";
 import { NotFoundError } from "../../errors/AppError";
+import { IUseCase } from "../../interfaces/usecase.inteface";
 
-type UseCaseParam = {
-  id: number;
+type Param = {
+  taskId: number;
   userId: number;
 };
+type Return = Task;
 
-export class DeleteTaskUseCase {
-  constructor(private taskRepository: TaskRepository) {}
+export class DeleteTaskUseCase implements IUseCase<Param, Return> {
+  private taskRepository: TaskRepository;
 
-  async execute({ id, userId }: UseCaseParam): Promise<Task> {
-    if (!id) {
+  constructor() {
+    this.taskRepository = new TaskRepository();
+  }
+
+  async execute({ taskId, userId }: Param): Promise<Task> {
+    const task = await this.taskRepository.findById(taskId, userId);
+    if (!task) {
       throw new NotFoundError("Task not found");
-    } else {
-      return this.taskRepository.delete(id, userId);
     }
+    return this.taskRepository.delete(taskId, userId);
   }
 }

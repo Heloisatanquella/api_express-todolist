@@ -1,27 +1,30 @@
-import { Task, Prisma } from "@prisma/client";
+import { Task } from "@prisma/client";
 import { TaskRepository } from "../../repositories/task.repository";
 import { NotFoundError } from "../../errors/AppError";
+import { UpdateTaskDto } from "../../dtos/task.dtos";
+import { IUseCase } from "../../interfaces/usecase.inteface";
 
-type UseCaseParam = {
-  body: Prisma.TaskUpdateInput;
+type Param = UpdateTaskDto & {
   userId: number;
   taskId: number;
 };
 
-export class UpdateTaskUseCase {
-  constructor(private taskRepository: TaskRepository) {}
+type Return = Task;
 
-  async execute({ body, userId, taskId }: UseCaseParam): Promise<Task> {
-    if (!taskId) {
+export class UpdateTaskUseCase implements IUseCase<Param, Return> {
+  private taskRepository: TaskRepository;
+
+  constructor() {
+    this.taskRepository = new TaskRepository();
+  }
+
+  async execute({ userId, taskId, ...rest }: Param): Promise<Task> {
+    const task = await this.taskRepository.findById(taskId, userId);
+    if (!task) {
       throw new NotFoundError("Task not found");
-    } else {
-      return await this.taskRepository.update(
-        taskId,
-        {
-          ...body,
-        },
-        userId
-      );
     }
+    return await this.taskRepository.update(taskId, userId, {
+      ...rest,
+    });
   }
 }

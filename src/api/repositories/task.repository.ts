@@ -13,7 +13,7 @@ export class TaskRepository {
     return await this.prisma.task.create({ data });
   }
 
-  async update(id: number, data: Prisma.TaskUpdateInput, userId: number): Promise<Task> {
+  async update(id: number, userId: number, data: Prisma.TaskUpdateInput): Promise<Task> {
     return this.prisma.task.update({
       where: { id, userId },
       data,
@@ -21,16 +21,8 @@ export class TaskRepository {
   }
 
   async delete(id: number, userId: number): Promise<Task> {
-    const task = await this.prisma.task.findFirst({
-      where: { id, userId },
-    });
-
-    if (!task) {
-      throw new Error("Task not found or unauthorized");
-    }
-
     return await this.prisma.task.delete({
-      where: { id },
+      where: { id, userId },
     });
   }
 
