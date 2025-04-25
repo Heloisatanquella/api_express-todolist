@@ -8,7 +8,7 @@ const router = Router();
  router.post('/login', UserController.login)
   // Rotas com auth middleware
  router.use(verifyToken);
- router.put('/:id', UserController.update)
+ router.put('/me', UserController.update)
  router.get('/me', UserController.getById)
 
 export default router;

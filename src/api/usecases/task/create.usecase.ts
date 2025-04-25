@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { Task } from "@prisma/client";
 import { TaskRepository } from "../../repositories/task.repository";
+import { BadRequestError } from "../../errors/AppError";
 
 type UseCaseParam = {
   body: Prisma.TaskCreateInput;
@@ -12,10 +13,10 @@ export class CreateTaskUseCase {
 
   async execute({ body, userId }: UseCaseParam): Promise<Task> {
     if (!body.title || !body.description) {
-      throw new Error("Title and description is required.");
+      throw new BadRequestError("Title and description is required.");
     }
     return await this.taskRepository.create({
-      ...body,
+      ...body,  
       user: {
         connect: {
           id: userId

@@ -3,7 +3,7 @@ import { CreateUserUseCase } from "../usecases/user/create.usecase";
 import { NextFunction, Request, Response } from "express";
 import { FindUserUseCase } from "../usecases/user/get.usecase";
 import { UpdateUserUseCase } from "../usecases/user/update.usecase";
-import { NotFoundError, BadRequestError } from "../errors/AppError";
+import { BadRequestError } from "../errors/AppError";
 import { LoginUserUseCase } from "../usecases/user/login.usecase";
 
 const repository = new UserRepository();
@@ -44,10 +44,6 @@ export class UserController {
           const usecase = new FindUserUseCase(repository);
           const user = await usecase.execute({ id: userId });
     
-          if (!user) {
-            throw new NotFoundError("User not found");
-          }
-    
           res.status(201).json(user);
         } catch (error) {
           next(error);
@@ -56,11 +52,10 @@ export class UserController {
 
       static async update(req: Request, res: Response, next: NextFunction) {
         try {
-          const { body, params } = req;
-          const { id } = params;
-          const userId = Number(id);
+          const { body } = req;
+          const userId = req.userId;
       
-          if (!id || isNaN(userId)) {
+          if (!userId || isNaN(userId)) {
             throw new BadRequestError("Valid user ID is required.");
           }
       
@@ -69,10 +64,6 @@ export class UserController {
             id: userId,
             body: body,
           });
-      
-          if (!user) {
-            throw new NotFoundError("User not found");
-          }
       
           res.status(201).json(user);
         } catch (error) {

@@ -27,11 +27,11 @@ export class UserRepository {
     });
   }
 
-  async update(id: number, data: Prisma.UserUpdateInput): Promise<User> {
+  async update(id: number, data: {name: string, email: string}): Promise<User> {
     return await this.prisma.user.update({
       where: { id },
       data,
-      select: this.userWithOutPassword,
+      select: this.userWithOutPassword, 
     });
   }
 }
