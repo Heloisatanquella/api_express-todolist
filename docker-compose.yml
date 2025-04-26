@@ -15,15 +15,17 @@ services:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules # Para evitar conflitos entre host e container
   postgres:
-    image: postgres:15 # Versão da imagem PostgreSQL
+    image: postgres:latest
+    container_name: todolist_postgres
     environment:
-      POSTGRES_USER: root # Nome de usuário
-      POSTGRES_PASSWORD: root # Senha
-      POSTGRES_DB: db # Nome do banco de dados
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todolist
     ports:
-      - "5432:5432" # Porta do host mapeada para o container
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Persistência de dados
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
 
 volumes:
   postgres_data:
