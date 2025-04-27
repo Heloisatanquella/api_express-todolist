@@ -57,6 +57,7 @@ docker-compose up -d
 
 6. Execute as migrações do Prisma:
 ```bash
+npx prisma generate
 npx prisma migrate dev
 ```
 

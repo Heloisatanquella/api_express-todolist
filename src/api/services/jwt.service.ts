@@ -4,11 +4,12 @@ export type EncodeDataToken = {
   userId: number;
 };
 
-// Geração do token de acesso
+const { JWT_SECRET } = process.env
+
 export class JwtService {
   private secret: string;
   constructor() {
-    this.secret = "SECRET";
+    this.secret = JWT_SECRET || "SECRET";
   }
 
   signin(data: EncodeDataToken) {
