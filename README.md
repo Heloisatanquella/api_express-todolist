@@ -88,7 +88,7 @@ A API estará disponível em `http://localhost:3000`
 
 2. Execute os testes:
 ```bash
-pytest __tests__/e2e/ -v
+npm run test:e2e
 ```
 
 Para ver a cobertura de testes:
@@ -100,11 +100,7 @@ pytest --cov=tests/
 
 1. Execute os testes unitários:
 ```bash
-npm run test
-```
-Para ver a cobertura de testes:
-```bash
-npm run test -- --coverage
+npm run test:unit
 ```
 
 ## 📚 Documentação da API
