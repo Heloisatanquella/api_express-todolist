@@ -8,8 +8,8 @@ type Return = User;
 
 export class UpdateUserUseCase implements IUseCase<Param, Return> {
   private userRepository: UserRepository;
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository;
   }
   async execute({ userId, ...rest }: Param): Promise<User> {
       return await this.userRepository.update(userId, rest);
