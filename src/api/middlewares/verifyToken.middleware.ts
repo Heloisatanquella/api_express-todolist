@@ -1,31 +1,42 @@
 import jwtService from "../services/jwt.service"; //importando a classe com o token
 import { Request, Response, NextFunction } from 'express';
-// middleware que valida a autorizaçao e faz o decode do token
-async function verifyToken(req: Request, res: Response, next: NextFunction) {
-    const strToken = req.headers.authorization
-    if(!strToken) {
-        res.status(403).send('Token não encontrado')
-    }
-    // eslint-disable-next-line
-    const [_, token] = (strToken as string).split(' ');
 
-    if(!token) {
-        res.status(403).send('Token inválido')
-    }
-
-    try {
-        const decode = jwtService.decode(token) as { userId: number }
-
-        if ('userId' in decode && decode.userId) {
-            req.userId = decode.userId;
-            return next();
-        }
-
-        res.status(401).send('Token inválido')
-    } catch (error) {
-        console.log(error)
-        res.status(401).send('Token inválido')
+// Extend Express Request type
+declare module 'express' {
+    interface Request {
+        userId?: number;
     }
 }
 
-export default verifyToken
+// middleware que valida a autorizaçao e faz o decode do token
+function verifyToken(req: Request, res: Response, next: NextFunction): void {
+    const strToken = req.headers.authorization;
+    if(!strToken) {
+        res.status(403).send('Token não encontrado');
+        return;
+    }
+    
+    const [_, token] = (strToken as string).split(' ');
+
+    if(!token) {
+        res.status(403).send('Token inválido');
+        return;
+    }
+
+    try {
+        const decode = jwtService.decode(token) as { userId: number };
+
+        if ('userId' in decode && decode.userId) {
+            req.userId = decode.userId;
+            next();
+            return;
+        }
+
+        res.status(401).send('Token inválido');
+    } catch (error) {
+        console.log(error);
+        res.status(401).send('Token inválido');
+    }
+}
+
+export default verifyToken;

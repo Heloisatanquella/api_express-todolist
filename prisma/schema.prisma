@@ -16,22 +16,26 @@ datasource db {
 }
 
 // Tabela usuários
-
 model User {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  name     String
-  password String
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tasks Task[]
 }
 
 // Tabela tarefas
 model Task {
-  id       Int    @id @default(autoincrement())
-  title String
+  id          Int      @id @default(autoincrement())
+  title       String
   description String
-  userId Int 
-  
+  completed   Boolean  @default(false)
+  userId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   user User @relation(fields: [userId], references: [id])
 }

@@ -12,10 +12,10 @@ type Return = Task;
 
 export class GetTasksByIdUseCase implements IUseCase<Param, Return> {
   private taskRepository: TaskRepository;
-
-  constructor() {
-    this.taskRepository = new TaskRepository();
+  constructor(taskRepository: TaskRepository) {
+    this.taskRepository = taskRepository;
   }
+  
   async execute({ taskId, userId }: Param): Promise<Return> {
     const task = await this.taskRepository.findById(taskId, userId);
     if (!task) {

@@ -8,11 +8,11 @@ type Param = {
 type Return = Task[];
 
 export class GetTasksByUserUseCase implements IUseCase<Param, Return> {
-  private taskRepository: TaskRepository;
-
-  constructor() {
-    this.taskRepository = new TaskRepository();
+  private taskRepository: TaskRepository
+  constructor(taskRepository: TaskRepository) {
+    this.taskRepository = taskRepository;
   }
+  
   async execute({ userId }: Param): Promise<Return> {
     return await this.taskRepository.findAllByUserId(userId);
   }

@@ -33,4 +33,8 @@ export class TaskRepository {
   async findAllByUserId(userId: number): Promise<Task[]> {
     return this.prisma.task.findMany({ where: { userId } });
   }
+
+  async deleteAll(): Promise<void> {
+    await this.prisma.task.deleteMany();
+  }
 }

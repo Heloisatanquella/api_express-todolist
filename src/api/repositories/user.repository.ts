@@ -34,4 +34,20 @@ export class UserRepository {
       select: this.userWithOutPassword, 
     });
   }
+
+  async delete(id: number): Promise<void> {
+    await this.prisma.user.delete({
+      where: { id }
+    });
+  }
+
+  async deleteAll(): Promise<void> {
+    await prisma.user.deleteMany({
+      where: {
+        email: {
+          not: "admin@admin.com"
+        }
+      }
+    });
+  }
 }
