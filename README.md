@@ -19,8 +19,8 @@ API REST desenvolvida em Node.js com Express para gerenciamento de tarefas (Todo
 ## 🛠️ Ferramentas de Desenvolvimento 
 
 - TS-Node-Dev: Reload automático em ambiente de desenvolvimento
-- Jest: Testes unitários
-- Pytest (para testes de integração)
+- Jest: Framework de testes unitários
+- Pytest: Framework de testes de integração
 - ESLint: Linter para padronização de código
 - Husky: Hooks de Git para garantir qualidade de código nos commits
 - Commitlint: Validação de mensagens de commit
@@ -48,8 +48,8 @@ npm install
 
 3. Instale as dependências do Python:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+python3 -m venv venv
+.\venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -60,11 +60,19 @@ docker-compose up -d
 ```
 
 5. Configure as variáveis de ambiente:
-- Copie o arquivo `.env.example` para `.env`
+- Crie um arquivo na raiz do projeto com o nome `.env`
 - Configure as variáveis de ambiente no arquivo `.env`:
   ```
-  DATABASE_URL="postgresql://postgres:postgres@localhost:5432/todolist"
-  JWT_SECRET="sua_chave_secreta"
+  # Banco de dados
+  DATABASE_URL="postgresql://postgres:postgres@localhost:5432/todolist?schema=public"
+
+  # JWT
+  JWT_SECRET=your-secret-key
+
+  # Servidor
+  PORT=3001
+  NODE_ENV=development
+  AUTH_TOKEN=seu_token_aqui
   ```
 
 6. Execute as migrações do Prisma:
@@ -80,28 +88,40 @@ Para iniciar a API em modo de desenvolvimento:
 npm run dev
 ```
 
-A API estará disponível em `http://localhost:3000`
+A API estará disponível em `http://localhost:3001`
 
-## 🧪 Executando os Testes de Integração
+## 🧪 Testes
 
-1. Certifique-se de que a API está rodando em `http://localhost:3000`
+### Testes Unitários
 
-2. Execute os testes:
+Os testes unitários são executados com Jest e cobrem os seguintes componentes:
+- Repositories (UserRepository, TaskRepository)
+- Services (JwtService)
+- Middlewares (verifyToken, errorHandler, validatorDto)
+- Usecases (User e Task)
+
+Para executar os testes unitários:
 ```bash
-npm run test:e2e
+npm run test:unit        # Executa os testes uma vez
+npm run test:watch      # Executa os testes em modo watch
 ```
 
-Para ver a cobertura de testes:
+### Testes de Integração
+
+Os testes de integração são executados com Pytest e testam a API de ponta a ponta. Eles cobrem:
+- Operações CRUD de usuários
+- Autenticação e autorização
+- Operações CRUD de tarefas
+- Validações de dados
+- Tratamento de erros
+
+Para executar os testes de integração:
 ```bash
-pytest --cov=tests/
+npm run test:e2e              # Executa os testes sem relatório
+npm run test:e2e:report       # Executa os testes e gera relatório HTML
 ```
 
-## 🧪 Executando os Testes Unitários
-
-1. Execute os testes unitários:
-```bash
-npm run test:unit
-```
+O relatório HTML será gerado em `__tests__/e2e/reports/report.html`
 
 ## 📚 Documentação da API
 
@@ -111,6 +131,7 @@ npm run test:unit
 - `POST /users/login` - Login
 - `GET /users/me` - Obter dados do usuário
 - `PUT /users/me` - Atualizar usuário
+- `DELETE /users/me` - Deletar usuário
 
 ### Endpoints de Tarefas
 
@@ -125,6 +146,7 @@ npm run test:unit
 - Todos os endpoints de tarefas e alguns de usuário requerem autenticação via token JWT
 - O token deve ser enviado no header `Authorization: Bearer <token>`
 - Os testes de integração são assíncronos e utilizam pytest-asyncio
+- O banco de dados é limpo automaticamente antes de cada teste de integração
 - O banco de dados PostgreSQL está configurado para rodar na porta 5432
 - Credenciais padrão do PostgreSQL no Docker:
   - Usuário: postgres

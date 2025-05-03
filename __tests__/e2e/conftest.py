@@ -8,16 +8,28 @@ load_dotenv()
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:3000"
+    return "http://localhost:3001"
 
 @pytest.fixture
 async def client(base_url):
-    async with httpx.AsyncClient(base_url=base_url) as client:
+    async with httpx.AsyncClient(base_url=base_url, follow_redirects=False) as client:
         yield client
+
+@pytest.fixture(autouse=True)
+async def clean_database(client):
+    """Limpa o banco de dados antes de cada teste"""
+    try:
+        # Primeiro limpa todas as tarefas
+        await client.delete("/tasks")
+        # Depois limpa todos os usuários (exceto admin)
+        await client.delete("/users/all")
+    except Exception as e:
+        print(f"Erro ao limpar banco de dados: {e}")
+        raise
 
 @pytest.fixture
 async def test_user(client):
-    # Criar um usuário de teste
+    """Cria um usuário de teste e retorna seus dados"""
     user_data = {
         "name": "Test User",
         "email": f"test_{os.urandom(4).hex()}@example.com",
@@ -34,7 +46,7 @@ async def test_user(client):
 
 @pytest.fixture
 async def auth_token(client, test_user):
-    # Fazer login e obter o token
+    """Faz login e retorna o token de autenticação"""
     login_data = {
         "email": test_user["user"]["email"],
         "password": "123456"
@@ -51,6 +63,7 @@ async def auth_token(client, test_user):
 
 @pytest.fixture
 async def headers(auth_token):
+    """Retorna os headers com o token de autenticação"""
     return {
         "Authorization": f"Bearer {auth_token}",
         "Content-Type": "application/json"

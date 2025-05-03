@@ -16,7 +16,7 @@ export class UserController {
     try {
       const usecase = container.loginUserUseCase;
       const result = await usecase.execute(req.body);
-      res.status(201).json(result);
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
@@ -28,7 +28,7 @@ export class UserController {
       const usecase = container.findUserUseCase;
       const user = await usecase.execute({ id: userId });
 
-      res.status(201).json(user);
+      res.status(200).json({ user });
     } catch (error) {
       next(error);
     }
@@ -40,7 +40,29 @@ export class UserController {
       const usecase = container.updateUserUseCase;
       const user = await usecase.execute({ userId, ...req.body });
 
-      res.status(201).json(user);
+      res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.userId as number;
+      const usecase = container.deleteUserUseCase;
+      await usecase.execute({ id: userId });
+
+      res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const usecase = container.deleteAllUsersUseCase;
+      await usecase.execute();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

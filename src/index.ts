@@ -8,7 +8,7 @@ import 'reflect-metadata';
 async function bootstrap() {
   const app = express();
   app.use(express.json());  
-  const port = 3000;
+  const port = 3001;
   
   app.get('/', (req: Request, res: Response) => {
     res.status(200).json({
@@ -21,8 +21,7 @@ async function bootstrap() {
   app.use("/users", userRouter);  
   
   // Rotas com auth middleware
-  app.use(verifyToken);
-  app.use("/tasks", taskRouter);  
+  app.use("/tasks", verifyToken, taskRouter);  
 
   app.use(errorHandler);
   

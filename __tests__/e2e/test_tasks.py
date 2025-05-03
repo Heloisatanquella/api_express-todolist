@@ -4,6 +4,7 @@ import os
 
 @pytest.mark.asyncio
 async def test_create_task(client, test_user, headers):
+    """Testa a criação de uma nova tarefa"""
     task_data = {
         "title": "Test Task",
         "description": "This is a test task"
@@ -24,29 +25,34 @@ async def test_create_task(client, test_user, headers):
         raise
 
 @pytest.mark.asyncio
-async def test_get_all_tasks(client, headers):
+async def test_get_all_tasks(client, test_user, headers):
+    """Testa a obtenção de todas as tarefas do usuário"""
     try:
+        # Primeiro cria uma tarefa
+        await test_create_task(client, test_user, headers)
+        
         response = await client.get("/tasks", headers=headers)
         assert response.status_code == 200
         data = response.json()
         tasks = data["tasks"]
         assert isinstance(tasks, list)
-        if tasks:
-            assert "id" in tasks[0]
-            assert "title" in tasks[0]
-            assert "description" in tasks[0]
+        assert len(tasks) > 0
+        assert "id" in tasks[0]
+        assert "title" in tasks[0]
+        assert "description" in tasks[0]
     except Exception as e:
         print(f"Erro no teste test_get_all_tasks: {e}")
         raise
 
 @pytest.mark.asyncio
 async def test_get_task_by_id(client, test_user, headers):
+    """Testa a obtenção de uma tarefa específica"""
     try:
-        # Primeiro criamos uma tarefa
+        # Primeiro cria uma tarefa
         task_created = await test_create_task(client, test_user, headers)
         task = task_created["task"]
         
-        # Depois buscamos ela pelo ID
+        # Depois busca ela pelo ID
         response = await client.get(f"/tasks/{task['id']}", headers=headers)
         assert response.status_code == 200
         data = response.json()
@@ -61,8 +67,9 @@ async def test_get_task_by_id(client, test_user, headers):
 
 @pytest.mark.asyncio
 async def test_update_task(client, test_user, headers):
+    """Testa a atualização de uma tarefa"""
     try:
-        # Primeiro criamos uma tarefa
+        # Primeiro cria uma tarefa
         task_created = await test_create_task(client, test_user, headers)
         task = task_created["task"]
         
@@ -83,13 +90,19 @@ async def test_update_task(client, test_user, headers):
 
 @pytest.mark.asyncio
 async def test_delete_task(client, test_user, headers):
+    """Testa a exclusão de uma tarefa"""
     try:
-        # Primeiro criamos uma tarefa
+        # Primeiro cria uma tarefa
         task_created = await test_create_task(client, test_user, headers)
         task = task_created["task"]
         
+        # Depois exclui ela
         response = await client.delete(f"/tasks/{task['id']}", headers=headers)
         assert response.status_code == 204
+        
+        # Verifica se a tarefa foi realmente excluída
+        response = await client.get(f"/tasks/{task['id']}", headers=headers)
+        assert response.status_code == 404
     except Exception as e:
         print(f"Erro no teste test_delete_task: {e}")
         raise 

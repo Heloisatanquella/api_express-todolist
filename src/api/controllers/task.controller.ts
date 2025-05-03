@@ -25,7 +25,7 @@ export class TaskController {
         ...req.body,
       });
 
-      res.json(task);
+      res.status(200).json({ message: "Task updated successfully!", task });
     } catch (error) {
       next(error);
     }
@@ -42,7 +42,7 @@ export class TaskController {
         userId,
       });
 
-      res.status(200).json({ message: "Task deleted successfully!" });
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
@@ -59,7 +59,7 @@ export class TaskController {
         userId: Number(userId),
       });
 
-      res.json(task);
+      res.status(200).json({ task });
     } catch (error) {
       next(error);
     }
@@ -72,7 +72,17 @@ export class TaskController {
       const usecase = container.getTasksByUserUseCase;
       const tasks = await usecase.execute({ userId });
 
-      res.json(tasks);
+      res.status(200).json({ tasks });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const usecase = container.deleteAllTasksUseCase;
+      await usecase.execute();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

@@ -8,8 +8,8 @@ const { JWT_SECRET } = process.env
 
 export class JwtService {
   private secret: string;
-  constructor() {
-    this.secret = JWT_SECRET || "SECRET";
+  constructor(secret?: string) {
+    this.secret = secret || JWT_SECRET || "SECRET";
   }
 
   signin(data: EncodeDataToken) {

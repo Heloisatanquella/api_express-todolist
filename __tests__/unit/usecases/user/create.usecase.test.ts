@@ -38,7 +38,9 @@ describe('CreateUserUseCase', () => {
       id: 123,
       name: body.name,
       email: body.email,
-      password: hashedPassword
+      password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     // Faz o mock do retorno do metodo create
     userRepositoryMock.create.mockResolvedValue(createdUser);
