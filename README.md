@@ -70,9 +70,7 @@ docker-compose up -d
   JWT_SECRET=your-secret-key
 
   # Servidor
-  PORT=3001
-  NODE_ENV=development
-  AUTH_TOKEN=seu_token_aqui
+  PORT=3000
   ```
 
 6. Execute as migrações do Prisma:
@@ -88,7 +86,7 @@ Para iniciar a API em modo de desenvolvimento:
 npm run dev
 ```
 
-A API estará disponível em `http://localhost:3001`
+A API estará disponível em `http://localhost:3000`
 
 ## 🧪 Testes
 

@@ -5,10 +5,12 @@ import { errorHandler } from './api/middlewares/errorHandler.middleware';
 import verifyToken from './api/middlewares/verifyToken.middleware';
 import 'reflect-metadata';
 
+const { PORT } = process.env;
+
 async function bootstrap() {
   const app = express();
   app.use(express.json());  
-  const port = 3001;
+  const port = PORT || 3000;
   
   app.get('/', (req: Request, res: Response) => {
     res.status(200).json({
