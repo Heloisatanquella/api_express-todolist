@@ -1,15 +1,11 @@
-import { CreateTaskUseCase } from "../usecases/task/create.usecase";
 import { NextFunction, Request, Response } from "express";
-import { UpdateTaskUseCase } from "../usecases/task/update.usecase";
-import { DeleteTaskUseCase } from "../usecases/task/delete.usecase";
-import { GetTasksByUserUseCase } from "../usecases/task/getByUser.usecase";
-import { GetTasksByIdUseCase } from "../usecases/task/getById.usecase";
+import { container } from "../dependencies";
 
 export class TaskController {
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.userId as number;
-      const usecase = new CreateTaskUseCase();
+      const usecase = container.createTaskUseCase;
       const task = await usecase.execute({ ...req.body, userId });
       res.status(201).json({ message: "Task created successfully!", task });
     } catch (error) {
@@ -22,14 +18,14 @@ export class TaskController {
       const { id } = req.params;
       const userId = req.userId as number;
 
-      const usecase = new UpdateTaskUseCase();
+      const usecase = container.updateTaskUseCase;
       const task = await usecase.execute({
         taskId: Number(id),
         userId,
         ...req.body,
       });
 
-      res.json(task);
+      res.status(200).json({ message: "Task updated successfully!", task });
     } catch (error) {
       next(error);
     }
@@ -40,13 +36,13 @@ export class TaskController {
       const { id } = req.params;
       const userId = req.userId as number;
 
-      const usecase = new DeleteTaskUseCase();
+      const usecase = container.deleteTaskUseCase;
       await usecase.execute({
         taskId: Number(id),
         userId,
       });
 
-      res.status(200).json({ message: "Task deleted successfully!" });
+      res.status(204).send();
     } catch (error) {
       next(error);
     }
@@ -57,13 +53,13 @@ export class TaskController {
       const { id } = req.params;
       const userId = req.userId as number;
 
-      const usecase = new GetTasksByIdUseCase();
+      const usecase = container.getTasksByIdUseCase;
       const task = await usecase.execute({
         taskId: Number(id),
         userId: Number(userId),
       });
 
-      res.json(task);
+      res.status(200).json({ task });
     } catch (error) {
       next(error);
     }
@@ -73,10 +69,20 @@ export class TaskController {
     try {
       const userId = req.userId as number;
 
-      const usecase = new GetTasksByUserUseCase();
+      const usecase = container.getTasksByUserUseCase;
       const tasks = await usecase.execute({ userId });
 
-      res.json(tasks);
+      res.status(200).json({ tasks });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const usecase = container.deleteAllTasksUseCase;
+      await usecase.execute();
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

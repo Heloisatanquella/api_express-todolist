@@ -10,34 +10,33 @@ type Param = {
 };
 
 type Return = {
-    token: string;
-}
-
+  token: string;
+};
 
 export class LoginUserUseCase implements IUseCase<Param, Return> {
-    private userRepository: UserRepository;
-    private jwtService: JwtService;
+  private userRepository: UserRepository;
+  private jwtService: JwtService;
 
-  constructor() {
-    this.userRepository = new UserRepository();
-    this.jwtService = new JwtService();
+  constructor(userRepository: UserRepository, jwtService: JwtService) {
+    this.userRepository = userRepository;
+    this.jwtService = jwtService;
   }
 
   async execute({ email, password }: Param): Promise<Return> {
     const user = await this.userRepository.findByUniqueProp({ email }, true);
-    if(!user) {
-        throw new UnauthorizedError('E-mail or password wrong')
+    if (!user) {
+      throw new UnauthorizedError("E-mail or password wrong");
     }
 
     const encryptedPassword = user.password;
     const validPassword = await compare(password, encryptedPassword);
 
-    if(!validPassword) {
-        throw new UnauthorizedError('E-mail or password wrong')
+    if (!validPassword) {
+      throw new UnauthorizedError("E-mail or password wrong");
     }
 
-    const token = this.jwtService.signin({ userId: user.id })
+    const token = this.jwtService.signin({ userId: user.id });
 
-    return { token }
+    return { token };
   }
 }

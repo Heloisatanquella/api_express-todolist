@@ -1,15 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2016",
     "module": "commonjs",
-    "rootDir": "src",
-    "outDir": "dist",
-    "strict": true,
+    "rootDir": "./",
+    "outDir": "./dist",
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["./node_modules/@types", "./__tests__/types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src", "prisma"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*", "prisma/**/*", "__tests__/**/*"],
+  "exclude": ["node_modules", "dist", ".venv", "coverage"]
 }

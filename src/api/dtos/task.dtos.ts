@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional, IsBoolean } from "class-validator";
 
 export class CreateTaskDto {
   @IsNotEmpty({ message: "title is required" })
@@ -6,6 +6,10 @@ export class CreateTaskDto {
 
   @IsNotEmpty({ message: "description is required" })
   description!: string;
+
+  @IsOptional()
+  @IsBoolean()
+  completed?: boolean;
 }
 
 export class UpdateTaskDto {
@@ -16,4 +20,8 @@ export class UpdateTaskDto {
   @IsNotEmpty({ message: "description is empty" })
   @IsOptional()
   description!: string;
+
+  @IsOptional()
+  @IsBoolean()
+  completed?: boolean;
 }

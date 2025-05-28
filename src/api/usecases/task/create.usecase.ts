@@ -10,8 +10,8 @@ type Return = Task;
 
 export class CreateTaskUseCase implements IUseCase<Param, Return> {
   private taskRepository: TaskRepository
-  constructor() {
-    this.taskRepository = new TaskRepository();
+  constructor(taskRepository: TaskRepository) {
+    this.taskRepository = taskRepository;
   }
 
   async execute({ userId, ...rest }: Param): Promise<Task> {

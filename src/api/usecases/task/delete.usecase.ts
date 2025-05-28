@@ -10,10 +10,9 @@ type Param = {
 type Return = Task;
 
 export class DeleteTaskUseCase implements IUseCase<Param, Return> {
-  private taskRepository: TaskRepository;
-
-  constructor() {
-    this.taskRepository = new TaskRepository();
+  private taskRepository: TaskRepository
+  constructor(taskRepository: TaskRepository) {
+    this.taskRepository = taskRepository;
   }
 
   async execute({ taskId, userId }: Param): Promise<Task> {

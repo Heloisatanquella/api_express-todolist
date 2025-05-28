@@ -12,10 +12,9 @@ type Param = UpdateTaskDto & {
 type Return = Task;
 
 export class UpdateTaskUseCase implements IUseCase<Param, Return> {
-  private taskRepository: TaskRepository;
-
-  constructor() {
-    this.taskRepository = new TaskRepository();
+  private taskRepository: TaskRepository
+  constructor(taskRepository: TaskRepository) {
+    this.taskRepository = taskRepository;
   }
 
   async execute({ userId, taskId, ...rest }: Param): Promise<Task> {

@@ -10,8 +10,8 @@ type Return = User;
 
 export class FindUserUseCase implements IUseCase<Param, Return> {
   private userRepository: UserRepository;
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(userRepository: UserRepository) {
+    this.userRepository = userRepository;
   }
 
   async execute({ id }: Param): Promise<Return> {
