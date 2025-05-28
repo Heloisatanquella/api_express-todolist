@@ -1,4 +1,4 @@
-import { PrismaClient, Task } from "@prisma/client";
+import { Task } from "@prisma/client";
 import { TaskRepository } from "../../../src/api/repositories/task.repository";
 import prisma from "../../../src/api/libs/prisma";
 

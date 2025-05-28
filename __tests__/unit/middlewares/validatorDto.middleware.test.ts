@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from "express";
 import { validateDto } from "src/api/middlewares/validatorDto.middleware";
 import { plainToInstance } from "class-transformer";

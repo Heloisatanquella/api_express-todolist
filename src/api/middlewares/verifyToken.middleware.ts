@@ -16,7 +16,7 @@ function verifyToken(req: Request, res: Response, next: NextFunction): void {
         return;
     }
     
-    const [_, token] = (strToken as string).split(' ');
+    const token = (strToken as string).split(' ')[1] || undefined;
 
     if(!token) {
         res.status(403).send('Token inválido');

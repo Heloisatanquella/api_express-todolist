@@ -1,6 +1,7 @@
+// eslint-disable-next-line
 const { exec } = require('child_process');
 
-exec('netstat -ano | findstr :3000', (error, stdout, stderr) => {
+exec('netstat -ano | findstr :3000', (error, stdout) => {
   if (error) {
     console.error(`Erro ao executar netstat: ${error}`);
     return;
