@@ -22,7 +22,7 @@ export const verifyToken = async (
     }
 
     const jwtService = new JwtService();
-    const decoded = jwtService.decode(token);
+    const decoded = await jwtService.decode(token);
     req.userId = decoded.userId;
 
     return next();
