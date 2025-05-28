@@ -1,4 +1,4 @@
-import { User, Task } from "@prisma/client";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare global {
   namespace jest {
@@ -32,4 +32,4 @@ declare module "@prisma/client" {
   }
 }
 
-export {}; 
+export {};
