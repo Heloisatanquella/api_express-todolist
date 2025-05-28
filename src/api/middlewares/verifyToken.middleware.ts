@@ -1,35 +1,42 @@
+import jwtService from "../services/jwt.service"; //importando a classe com o token
 import { Request, Response, NextFunction } from 'express';
-import { JwtService } from '../services/jwt.service';
 
 // Extend Express Request type
 declare module 'express' {
     interface Request {
-        userId: number;
+        userId?: number;
     }
 }
 
 // middleware que valida a autorizaçao e faz o decode do token
-export const verifyToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
+function verifyToken(req: Request, res: Response, next: NextFunction): void {
+    const strToken = req.headers.authorization;
+    if(!strToken) {
+        res.status(403).send('Token não encontrado');
+        return;
+    }
+    
+    const [_, token] = (strToken as string).split(' ');
 
-    if (!token) {
-      return res.status(401).json({ message: 'Token not provided' });
+    if(!token) {
+        res.status(403).send('Token inválido');
+        return;
     }
 
-    const jwtService = new JwtService();
-    const decoded = await jwtService.decode(token);
-    req.userId = decoded.userId;
+    try {
+        const decode = jwtService.decode(token) as { userId: number };
 
-    return next();
-  } catch (error) {
-    console.log(error);
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-};
+        if ('userId' in decode && decode.userId) {
+            req.userId = decode.userId;
+            next();
+            return;
+        }
+
+        res.status(401).send('Token inválido');
+    } catch (error) {
+        console.log(error);
+        res.status(401).send('Token inválido');
+    }
+}
 
 export default verifyToken;

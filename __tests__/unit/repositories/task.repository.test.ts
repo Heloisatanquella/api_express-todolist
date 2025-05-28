@@ -1,12 +1,19 @@
-import { Task } from '@prisma/client';
-import { prismaMock } from '../../setup';
+import { PrismaClient, Task } from "@prisma/client";
+import { TaskRepository } from "../../../src/api/repositories/task.repository";
+import prisma from "../../../src/api/libs/prisma";
 
 jest.mock("../../../src/api/libs/prisma", () => ({
   __esModule: true,
-  default: prismaMock,
+  default: {
+    task: {
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+    },
+  },
 }));
-
-import { TaskRepository } from '../../../src/api/repositories/task.repository';
 
 describe("TaskRepository", () => {
   let taskRepository: TaskRepository;
@@ -38,11 +45,11 @@ describe("TaskRepository", () => {
         }
       };
 
-      (prismaMock.task.create as jest.Mock).mockResolvedValue(mockTask);
+      (prisma.task.create as jest.Mock).mockResolvedValue(mockTask);
 
       const result = await taskRepository.create(taskData);
 
-      expect(prismaMock.task.create).toHaveBeenCalledWith({
+      expect(prisma.task.create).toHaveBeenCalledWith({
         data: taskData,
       });
       expect(result).toEqual(mockTask);
@@ -59,11 +66,11 @@ describe("TaskRepository", () => {
         completed: true,
       };
 
-      (prismaMock.task.update as jest.Mock).mockResolvedValue(mockTask);
+      (prisma.task.update as jest.Mock).mockResolvedValue(mockTask);
 
       const result = await taskRepository.update(id, userId, data);
 
-      expect(prismaMock.task.update).toHaveBeenCalledWith({
+      expect(prisma.task.update).toHaveBeenCalledWith({
         where: { id, userId },
         data,
       });
@@ -76,11 +83,11 @@ describe("TaskRepository", () => {
       const id = 1;
       const userId = 1;
 
-      (prismaMock.task.delete as jest.Mock).mockResolvedValue(mockTask);
+      (prisma.task.delete as jest.Mock).mockResolvedValue(mockTask);
 
       const result = await taskRepository.delete(id, userId);
 
-      expect(prismaMock.task.delete).toHaveBeenCalledWith({
+      expect(prisma.task.delete).toHaveBeenCalledWith({
         where: { id, userId },
       });
       expect(result).toEqual(mockTask);
@@ -92,11 +99,11 @@ describe("TaskRepository", () => {
       const id = 1;
       const userId = 1;
 
-      (prismaMock.task.findUnique as jest.Mock).mockResolvedValue(mockTask);
+      (prisma.task.findUnique as jest.Mock).mockResolvedValue(mockTask);
 
       const result = await taskRepository.findById(id, userId);
 
-      expect(prismaMock.task.findUnique).toHaveBeenCalledWith({
+      expect(prisma.task.findUnique).toHaveBeenCalledWith({
         where: { id, userId },
       });
       expect(result).toEqual(mockTask);
@@ -108,11 +115,11 @@ describe("TaskRepository", () => {
       const userId = 1;
       const mockTasks = [mockTask];
 
-      (prismaMock.task.findMany as jest.Mock).mockResolvedValue(mockTasks);
+      (prisma.task.findMany as jest.Mock).mockResolvedValue(mockTasks);
 
       const result = await taskRepository.findAllByUserId(userId);
 
-      expect(prismaMock.task.findMany).toHaveBeenCalledWith({
+      expect(prisma.task.findMany).toHaveBeenCalledWith({
         where: { userId },
       });
       expect(result).toEqual(mockTasks);

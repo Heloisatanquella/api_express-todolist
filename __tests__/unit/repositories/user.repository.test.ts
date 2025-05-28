@@ -1,12 +1,17 @@
-import { User } from '@prisma/client';
-import { prismaMock } from '../../setup';
+import { PrismaClient, User } from "@prisma/client";
+import { UserRepository } from "../../../src/api/repositories/user.repository";
+import prisma from "../../../src/api/libs/prisma";
 
 jest.mock("../../../src/api/libs/prisma", () => ({
   __esModule: true,
-  default: prismaMock,
+  default: {
+    user: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+    },
+  },
 }));
-
-import { UserRepository } from '../../../src/api/repositories/user.repository';
 
 describe("UserRepository", () => {
   let userRepository: UserRepository;
@@ -33,11 +38,11 @@ describe("UserRepository", () => {
         password: "hashedpassword",
       };
 
-      (prismaMock.user.create as jest.Mock).mockResolvedValue(mockUser);
+      (prisma.user.create as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await userRepository.create(userData);
 
-      expect(prismaMock.user.create).toHaveBeenCalledWith({
+      expect(prisma.user.create).toHaveBeenCalledWith({
         data: userData,
         select: { id: true, name: true, email: true },
       });
@@ -49,11 +54,11 @@ describe("UserRepository", () => {
     it("deve encontrar um usuário por email sem senha", async () => {
       const where = { email: "test@example.com" };
 
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await userRepository.findByUniqueProp(where);
 
-      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where,
         select: { id: true, name: true, email: true },
       });
@@ -63,11 +68,11 @@ describe("UserRepository", () => {
     it("deve encontrar um usuário por email com senha quando solicitado", async () => {
       const where = { email: "test@example.com" };
 
-      (prismaMock.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await userRepository.findByUniqueProp(where, true);
 
-      expect(prismaMock.user.findUnique).toHaveBeenCalledWith({
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where,
       });
       expect(result).toEqual(mockUser);
@@ -82,11 +87,11 @@ describe("UserRepository", () => {
         email: "updated@example.com",
       };
 
-      (prismaMock.user.update as jest.Mock).mockResolvedValue(mockUser);
+      (prisma.user.update as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await userRepository.update(id, data);
 
-      expect(prismaMock.user.update).toHaveBeenCalledWith({
+      expect(prisma.user.update).toHaveBeenCalledWith({
         where: { id },
         data,
         select: { id: true, name: true, email: true },

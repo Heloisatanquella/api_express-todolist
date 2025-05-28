@@ -3,10 +3,10 @@ import { User, Task } from "@prisma/client";
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toHaveBeenCalledWith(...args: unknown[]): R;
+      toHaveBeenCalledWith(...args: any[]): R;
       toHaveBeenCalledTimes(expected: number): R;
-      toEqual(expected: unknown): R;
-      toBe(expected: unknown): R;
+      toEqual(expected: any): R;
+      toBe(expected: any): R;
     }
   }
 }
@@ -32,16 +32,4 @@ declare module "@prisma/client" {
   }
 }
 
-export {};
-
-declare global {
-  namespace Express {
-    interface Request {
-      user: User;
-      task: Task;
-      body: Record<string, unknown>;
-      params: Record<string, unknown>;
-      query: Record<string, unknown>;
-    }
-  }
-} 
+export {}; 
