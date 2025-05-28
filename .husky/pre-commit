@@ -1,12 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm run lint
-if [ $? -ne 0 ]; then
-  exit 1
-fi
+yarn lint
 
-npm run test:unit
-if [ $? -ne 0 ]; then
-  exit 1
-fi
+yarn test:unit

@@ -70,7 +70,9 @@ docker-compose up -d
   JWT_SECRET=your-secret-key
 
   # Servidor
-  PORT=3000
+  PORT=3001
+  NODE_ENV=development
+  AUTH_TOKEN=seu_token_aqui
   ```
 
 6. Execute as migrações do Prisma:
@@ -86,7 +88,7 @@ Para iniciar a API em modo de desenvolvimento:
 npm run dev
 ```
 
-A API estará disponível em `http://localhost:3000`
+A API estará disponível em `http://localhost:3001`
 
 ## 🧪 Testes
 
@@ -99,31 +101,10 @@ Os testes unitários são executados com Jest e cobrem os seguintes componentes:
 - Usecases (User e Task)
 
 Para executar os testes unitários:
-
 ```bash
-# Executa todos os testes unitários uma vez
-npm run test:unit
-
-# Executa os testes em modo watch (os testes são re-executados quando há mudanças)
-npm run test:watch
-
-# Executa os testes com cobertura de código
-npm run test:coverage
-
-# Executa testes específicos (exemplo: apenas testes de usuário)
-npm run test:unit -- __tests__/unit/usecases/user.usecase.test.ts
-
-# Executa testes com um padrão específico
-npm run test:unit -- -t "deve criar um usuário"
+npm run test:unit        # Executa os testes uma vez
+npm run test:watch      # Executa os testes em modo watch
 ```
-
-Os testes unitários estão localizados em `__tests__/unit/` e seguem a estrutura:
-- `__tests__/unit/repositories/` - Testes dos repositórios
-- `__tests__/unit/services/` - Testes dos serviços
-- `__tests__/unit/middlewares/` - Testes dos middlewares
-- `__tests__/unit/usecases/` - Testes dos casos de uso
-
-Cada arquivo de teste segue o padrão `*.test.ts` e utiliza o Jest como framework de testes.
 
 ### Testes de Integração
 
