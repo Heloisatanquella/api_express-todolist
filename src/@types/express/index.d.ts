@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { Request } from 'express';
+import * as express from 'express';
 
 declare global {
   namespace Express {

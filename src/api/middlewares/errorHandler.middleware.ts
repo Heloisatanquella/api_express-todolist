@@ -1,12 +1,10 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { isKnownError } from "../errors/AppError";
 
 export function errorHandler(
   err: Error,
   req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  next: NextFunction
 ) {
   if (isKnownError(err)) {
     res.status(err.statusCode).json({
