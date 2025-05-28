@@ -8,7 +8,7 @@ load_dotenv()
 
 @pytest.fixture
 def base_url():
-    return "http://localhost:3001"
+    return "http://localhost:3000"
 
 @pytest.fixture
 async def client(base_url):

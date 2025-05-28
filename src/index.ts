@@ -7,11 +7,13 @@ import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './api/swagger'; 
 import 'reflect-metadata';
 
+const { PORT } = process.env;
+
 async function bootstrap() {
   const app = express();
-  const port = 3001;
 
-  app.use(express.json());
+  app.use(express.json());  
+  const port = PORT || 3000;
 
   // Endpoint da documentação Swagger
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
