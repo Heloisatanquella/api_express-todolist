@@ -134,21 +134,22 @@ O relatório HTML será gerado em `__tests__/e2e/reports/report.html`
 
 ## 📚 Documentação da API
 
-### 🔐 Usuário
+A API conta com uma documentação gerada com Swagger, o que facilita a compreensão, testes e integração com a API por parte de desenvolvedores externos.
 
-- `POST /users` - Criar usuário
-- `POST /users/login` - Login
-- `GET /users/me` - Obter dados do usuário
-- `PUT /users/me` - Atualizar usuário
-- `DELETE /users/me` - Deletar usuário
+-  **📍 Acesso:**
+  Com a aplicação rodando localmente (npm run dev), acesse no navegador:
+  ```bash
+    http://localhost:3001/api-docs
+  ```
 
-### 📝 Tarefas
+-  **🧰 Ferramentas Utilizadas:**
+    -  swagger-jsdoc: Responsável por gerar a especificação da API a partir de comentários JSDoc nas rotas.
+    -  swagger-ui-express: Exibe a documentação interativa em uma rota acessível pela web.
 
-- `POST /tasks` - Criar tarefa
-- `GET /tasks` - Listar todas as tarefas do usuário
-- `GET /tasks/:id` - Obter tarefa por ID
-- `PUT /tasks/:id` - Atualizar tarefa
-- `DELETE /tasks/:id` - Deletar tarefa
+- **⚙️ Configuração**:
+    - A documentação é configurada em: **src/api/swagger.ts**
+    - Os comentários que definem os endpoints estão nas rotas em **src/api/routes/**.
+
 
 ### 🔐 Autenticação
 
