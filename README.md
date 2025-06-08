@@ -1,37 +1,42 @@
 # API REST Express TodoList
 
-API REST desenvolvida em Node.js com Express para gerenciamento de tarefas (TodoList) com autenticação de usuários.
+API REST desenvolvida em **Node.js com Express** para gerenciamento de tarefas (_TodoList_) com autenticação de usuários e arquitetura modular baseada em controladores, casos de uso (usecases) e repositórios.
+
+---
 
 ## 🚀 Tecnologias Utilizadas
 
-- Node.js: Ambiente de execução JavaScript
-- Express: Framework para criação de APIs REST
-- TypeScript: Superset do JavaScript para tipagem estática
-- Prisma (ORM)
-- PostgreSQL: Banco de dados
-- Docker: onde rodamos database no ORM
-- JWT (jsonwebtoken): Autenticação baseada em tokens
-- Bcrypt: Hash de senhas para segurança
-- Class-validator: Validação de dados via decorators
-- Class-transformer: Transformação de objetos em classes
-- Reflect-metadata: Suporte a decorators no TypeScript
+- **Node.js**: Ambiente de execução JavaScript
+- **Express**: Framework para criação de APIs REST
+- **TypeScript**: Superset do JavaScript para tipagem estática
+- **Prisma**: ORM para integração com banco de dados relacional
+- **PostgreSQL**: Banco de dados relacional
+- **Docker**: Utilizado para rodar o banco de dados em ambiente isolado
+- **JWT (jsonwebtoken)**: Autenticação baseada em tokens
+-  **Bcrypt**: Hash de senhas
+- **class-validator / class-transformer / reflect-metadata**: Validação e transformação de DTOs
+
+---
 
 ## 🛠️ Ferramentas de Desenvolvimento 
 
-- TS-Node-Dev: Reload automático em ambiente de desenvolvimento
-- Jest: Framework de testes unitários
-- Pytest: Framework de testes de integração
-- ESLint: Linter para padronização de código
-- Husky: Hooks de Git para garantir qualidade de código nos commits
-- Commitlint: Validação de mensagens de commit
+- **TS-Node-Dev**: Reload automático em ambiente de desenvolvimento
+- **Jest**: Framework de testes unitários
+- **Pytest**: Framework de testes de integração (Python)
+- **ESLint**: Linter para padronização de código
+- **Husky + Commitlint**: Validação e padronização de commits via Git hooks
+
+---
 
 ## 📋 Pré-requisitos
 
-- Node.js (versão 18 ou superior)
-- Python (versão 3.8 ou superior)
-- PostgreSQL (banco de dados que usamos no Prisma)
+- Node.js (v18+)
+- Python (v3.8+)
+- PostgreSQL
 - npm ou yarn
-- (Opcional) Docker (caso queira rodar banco de dados em container)
+- (Opcional) Docker
+
+---
 
 ## 🔧 Instalação
 
@@ -79,8 +84,10 @@ docker-compose up -d
 ```bash
 npx prisma generate
 npx prisma migrate dev
-```
 
+---
+
+```
 ## 🏃‍♂️ Executando a API
 
 Para iniciar a API em modo de desenvolvimento:
@@ -90,13 +97,15 @@ npm run dev
 
 A API estará disponível em `http://localhost:3001`
 
+---
+
 ## 🧪 Testes
 
-### Testes Unitários
+### ✅ Testes Unitários (Jest)
 
-Os testes unitários são executados com Jest e cobrem os seguintes componentes:
-- Repositories (UserRepository, TaskRepository)
-- Services (JwtService)
+Cobrem:
+- Repositórios (UserRepository, TaskRepository)
+- Serviços (JwtService)
 - Middlewares (verifyToken, errorHandler, validatorDto)
 - Usecases (User e Task)
 
@@ -106,14 +115,12 @@ npm run test:unit        # Executa os testes uma vez
 npm run test:watch      # Executa os testes em modo watch
 ```
 
-### Testes de Integração
+### ✅ Testes de Integração (Pytest)
 
-Os testes de integração são executados com Pytest e testam a API de ponta a ponta. Eles cobrem:
-- Operações CRUD de usuários
+Cobrem:
+- CRUD de usuários e tarefas
 - Autenticação e autorização
-- Operações CRUD de tarefas
-- Validações de dados
-- Tratamento de erros
+- Validações e erros
 
 Para executar os testes de integração:
 ```bash
@@ -123,9 +130,11 @@ npm run test:e2e:report       # Executa os testes e gera relatório HTML
 
 O relatório HTML será gerado em `__tests__/e2e/reports/report.html`
 
+---
+
 ## 📚 Documentação da API
 
-### Endpoints de Usuário
+### 🔐 Usuário
 
 - `POST /users` - Criar usuário
 - `POST /users/login` - Login
@@ -133,7 +142,7 @@ O relatório HTML será gerado em `__tests__/e2e/reports/report.html`
 - `PUT /users/me` - Atualizar usuário
 - `DELETE /users/me` - Deletar usuário
 
-### Endpoints de Tarefas
+### 📝 Tarefas
 
 - `POST /tasks` - Criar tarefa
 - `GET /tasks` - Listar todas as tarefas do usuário
@@ -141,15 +150,77 @@ O relatório HTML será gerado em `__tests__/e2e/reports/report.html`
 - `PUT /tasks/:id` - Atualizar tarefa
 - `DELETE /tasks/:id` - Deletar tarefa
 
-## 📝 Notas
+### 🔐 Autenticação
 
-- Todos os endpoints de tarefas e alguns de usuário requerem autenticação via token JWT
-- O token deve ser enviado no header `Authorization: Bearer <token>`
+- A maioria dos endpoints exige um *token JWT*.
+- Envie o token no header:
+   ```bash
+      Authorization: Bearer <token>
+   ```
+
+---
+
+### 📁 Arquitetura principal de Pastas
+
+- O projeto segue uma estrutura modular e organizada por contexto, baseada em princípios da Clean Architecture, onde cada responsabilidade é isolada em sua respectiva camada:
+
+```bash
+src/
+└── api/
+    ├── controllers/          # Controladores responsáveis por lidar com as requisições HTTP
+    ├── database/             # Configuração do banco de dados (Prisma, conexão, seed, etc.)
+    ├── dtos/                 # Data Transfer Objects: definição e validação de dados
+    ├── errors/               # Classes e estruturas para tratamento centralizado de erros
+    ├── interfaces/           # Interfaces e tipos utilizados no projeto
+    ├── libs/                 # Bibliotecas e funções utilitárias
+    ├── middlewares/          # Middlewares globais e específicos (ex: autenticação, validação)
+    ├── repositories/         # Implementações dos repositórios (acesso ao banco)
+    ├── routes/               # Definição e agrupamento das rotas da aplicação
+    ├── services/             # Serviços auxiliares (ex: JWT, hash, etc.)
+    ├── usecases/             # Casos de uso que encapsulam a lógica de negócio
+    ├── dependencies.ts       # Injeção de dependências e vínculo entre camadas
+    ├── swagger.ts            # Configuração da documentação Swagger
+    ├── swagger-jsdoc.d.ts    # Tipagem para o Swagger JSDoc
+    └── index.ts              # Arquivo principal que inicializa o app Express
+
+__tests__/                   # Testes automatizados (unitários e integração)
+├── e2e/                     # Testes de integração (API)
+├── unit/                    # Testes unitários (camadas internas)
+
+.husky/                      # Hooks de Git para garantir qualidade nos commits
+.prisma/                     # Definição do schema do banco de dados Prisma
+.venv/                       # Ambiente virtual do Python (testes de integração)
+coverage/                   # Relatórios de cobertura de testes
+
+```
+
+
+---
+
+## 📝 Notas Adicionais
+
 - Os testes de integração são assíncronos e utilizam pytest-asyncio
-- O banco de dados é limpo automaticamente antes de cada teste de integração
-- O banco de dados PostgreSQL está configurado para rodar na porta 5432
-- Credenciais padrão do PostgreSQL no Docker:
+- A porta padrão do PostgreSQL é 5432
+- Credenciais padrão no Docker:
   - Usuário: postgres
   - Senha: postgres
   - Banco: todolist
-  - Porta: 5432
+
+---
+
+### 🤝 Contribuindo
+
+- Contribuições são bem-vindas! Para contribuir:
+
+  1. Fork este repositório
+  2. Crie uma branch com sua feature: git checkout -b feature/nome-da-feature
+  3. Commit suas alterações: git commit -m 'feat: adiciona nova feature'
+  4. Faça push: git push origin feature/nome-da-feature
+  5. Abra um Pull Request
+
+---
+
+### 🤝 Autores:
+- [@HeloisaSilva](https://github.com/Heloisatanquella)
+- [@WesleyBastos](https://github.com/WesleyABastos)
+- [@JoãoCicery](https://github.com/Ciceriy)
